@@ -96,6 +96,74 @@ impl PromptData {
         }
     }
 
+    /// Builds a clean prompt for preview with section titles instead of markers
+    pub fn build_preview_prompt(&self) -> String {
+        let mut sections: Vec<String> = Vec::new();
+
+        if let Some(section) = &self.few_shot {
+            if !section.content.trim().is_empty() {
+                sections.push(format!("## Few-Shot Examples\n\n{}", section.content.trim()));
+            }
+        }
+
+        if let Some(section) = &self.context {
+            if !section.description.trim().is_empty() {
+                sections.push(format!("## Contexto\n\n{}", section.description.trim()));
+            }
+        }
+
+        if let Some(section) = &self.main_content {
+            if !section.instructions.trim().is_empty() {
+                sections.push(format!("## Conteúdo Principal\n\n{}", section.instructions.trim()));
+            }
+        }
+
+        if let Some(section) = &self.auxiliary_content {
+            if !section.data.trim().is_empty() {
+                sections.push(format!("## Conteúdo Auxiliar\n\n{}", section.data.trim()));
+            }
+        }
+
+        if let Some(section) = &self.limitations {
+            if !section.text.trim().is_empty() {
+                sections.push(format!("## Limitações\n\n{}", section.text.trim()));
+            }
+        }
+
+        if let Some(section) = &self.refactoring {
+            if !section.text.trim().is_empty() {
+                sections.push(format!("## Refatoração (Código)\n\n{}", section.text.trim()));
+            }
+        }
+
+        if let Some(section) = &self.guidance {
+            if !section.text.trim().is_empty() {
+                sections.push(format!("## Orientações\n\n{}", section.text.trim()));
+            }
+        }
+
+        if let Some(section) = &self.tests {
+            if !section.text.trim().is_empty() {
+                sections.push(format!("## Testes\n\n{}", section.text.trim()));
+            }
+        }
+
+        if let Some(section) = &self.output_format {
+            if !section.text.trim().is_empty() {
+                sections.push(format!("## Formato de Saída\n\n{}", section.text.trim()));
+            }
+        }
+
+        if sections.is_empty() {
+            "Nenhum campo foi preenchido ainda.".to_string()
+        } else {
+            // Add user-friendly message at the end
+            sections.push("---".to_string());
+            sections.push("📋 **Nota:** Ao copiar ou salvar, apenas o texto do prompt será incluído, sem os subtítulos ou marcações acima.".to_string());
+            sections.join("\n\n")
+        }
+    }
+
     /// Helper function to remove section markers like <START_SECTION> and <END_SECTION>
     fn remove_markers(text: &str) -> String {
         let mut cleaned_lines: Vec<String> = Vec::new();

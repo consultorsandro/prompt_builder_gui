@@ -27,6 +27,120 @@ use services::{
 
 slint::include_modules!();
 
+/// Parse prompt content from file and populate UI fields
+fn parse_prompt_content(content: &str, ui: &AppWindow) {
+    // Simple parser that tries to identify sections by common patterns
+    // This will work with both clean text and marked sections
+    
+    let lines: Vec<&str> = content.lines().collect();
+    let mut current_section = String::new();
+    let mut current_content = String::new();
+    
+    for line in lines {
+        let trimmed = line.trim();
+        
+        // Skip empty lines and separators
+        if trimmed.is_empty() || trimmed.starts_with("---") || trimmed.starts_with("📋") {
+            continue;
+        }
+        
+        // Check for section markers or headers
+        if trimmed.starts_with("## ") || trimmed.starts_with("<START_") {
+            // Save previous section if any
+            if !current_section.is_empty() && !current_content.trim().is_empty() {
+                populate_field(&current_section, current_content.trim(), ui);
+            }
+            
+            // Start new section
+            if trimmed.starts_with("## ") {
+                current_section = trimmed[3..].to_string(); // Remove "## "
+            } else if trimmed.starts_with("<START_") {
+                current_section = extract_section_name(trimmed);
+            }
+            current_content.clear();
+        } else if trimmed.starts_with("<END_") {
+            // End of marked section - save it
+            if !current_section.is_empty() && !current_content.trim().is_empty() {
+                populate_field(&current_section, current_content.trim(), ui);
+            }
+            current_section.clear();
+            current_content.clear();
+        } else {
+            // Add content to current section
+            if !current_content.is_empty() {
+                current_content.push('\n');
+            }
+            current_content.push_str(line);
+        }
+    }
+    
+    // Save last section if any
+    if !current_section.is_empty() && !current_content.trim().is_empty() {
+        populate_field(&current_section, current_content.trim(), ui);
+    }
+}
+
+fn extract_section_name(marker: &str) -> String {
+    if marker.contains("FEW_SHOT") {
+        "Few-Shot Examples".to_string()
+    } else if marker.contains("CONTEXT") {
+        "Contexto".to_string()
+    } else if marker.contains("MAIN_CONTENT") {
+        "Conteúdo Principal".to_string()
+    } else if marker.contains("AUXILIARY") {
+        "Conteúdo Auxiliar".to_string()
+    } else if marker.contains("LIMITATIONS") {
+        "Limitações".to_string()
+    } else if marker.contains("REFACTORING") {
+        "Refatoração".to_string()
+    } else if marker.contains("GUIDANCE") {
+        "Orientações".to_string()
+    } else if marker.contains("TESTS") {
+        "Testes".to_string()
+    } else if marker.contains("OUTPUT_FORMAT") {
+        "Formato de Saída".to_string()
+    } else {
+        String::new()
+    }
+}
+
+fn populate_field(section: &str, content: &str, ui: &AppWindow) {
+    println!("📝 Carregando seção '{}': '{}'", section, &content[..content.len().min(50)]);
+    
+    match section {
+        "Few-Shot Examples" | "Few-Shot" => {
+            ui.set_few_shot_text(content.into());
+        }
+        "Contexto" | "Context" => {
+            ui.set_context_text(content.into());
+        }
+        "Conteúdo Principal" | "Main Content" => {
+            ui.set_main_content_text(content.into());
+        }
+        "Conteúdo Auxiliar" | "Auxiliary Content" => {
+            ui.set_auxiliary_content_text(content.into());
+        }
+        "Limitações" | "Limitations" => {
+            ui.set_limitations_text(content.into());
+        }
+        "Refatoração (Código)" | "Refatoração" | "Refactoring" => {
+            ui.set_refactoring_text(content.into());
+        }
+        "Orientações" | "Guidance" => {
+            ui.set_guidance_text(content.into());
+        }
+        "Testes" | "Tests" => {
+            ui.set_tests_text(content.into());
+        }
+        "Formato de Saída" | "Output Format" => {
+            ui.set_output_format_text(content.into());
+        }
+        _ => {
+            println!("⚠️ Seção desconhecida: {}", section);
+        }
+    }
+}
+
 fn main() -> Result<(), Box<dyn Error>> {
     let ui = AppWindow::new()?;
 
@@ -134,8 +248,8 @@ fn main() -> Result<(), Box<dyn Error>> {
             data.output_format = Some(output_format);
         }
         
-        // Generate the prompt with section markers for better visibility in preview
-        let generated_prompt = data.build_prompt(true);
+        // Generate the prompt with clean formatting for preview
+        let generated_prompt = data.build_preview_prompt();
         
         // Debug: print generated prompt to console
         println!("📝 Prompt gerado ({} caracteres):\n{}", generated_prompt.len(), generated_prompt);
@@ -169,6 +283,54 @@ fn main() -> Result<(), Box<dyn Error>> {
             }
         } else {
             println!("💭 Salvamento cancelado pelo usuário");
+        }
+    });
+
+    // Open prompt callback
+    let ui_weak_open = ui.as_weak();
+    let prompt_data_clone_open = prompt_data.clone();
+    ui.on_open_prompt(move || {
+        let ui = ui_weak_open.unwrap();
+        
+        // Open file dialog to choose file to open
+        if let Some(file_path) = FileDialog::new()
+            .set_title("Abrir Prompt")
+            .add_filter("Arquivo de Texto", &["txt"])
+            .add_filter("Todos os Arquivos", &["*"])
+            .pick_file()
+        {
+            match std::fs::read_to_string(&file_path) {
+                Ok(content) => {
+                    println!("✅ Arquivo carregado: {:?}", file_path);
+                    
+                    // Clear current data and UI
+                    let mut data = prompt_data_clone_open.borrow_mut();
+                    *data = PromptData::new();
+                    
+                    ui.set_few_shot_text("".into());
+                    ui.set_context_text("".into());
+                    ui.set_main_content_text("".into());
+                    ui.set_auxiliary_content_text("".into());
+                    ui.set_limitations_text("".into());
+                    ui.set_refactoring_text("".into());
+                    ui.set_guidance_text("".into());
+                    ui.set_tests_text("".into());
+                    ui.set_output_format_text("".into());
+                    
+                    // Parse the content and populate fields
+                    // This is a simple parser that looks for section patterns
+                    parse_prompt_content(&content, &ui);
+                    
+                    ui.set_preview_text("Arquivo carregado! Clique em 'Gerar Prompt' para ver o preview.".into());
+                    
+                    println!("📄 Conteúdo carregado nos campos da interface");
+                }
+                Err(e) => {
+                    eprintln!("❌ Erro ao ler arquivo: {}", e);
+                }
+            }
+        } else {
+            println!("💭 Abertura de arquivo cancelada pelo usuário");
         }
     });
 
