@@ -22,3 +22,16 @@ pub fn save_prompt_to_file(prompt_text: &str, output_directory: &str, title: &st
 
     Ok(())
 }
+
+/// Saves the prompt text to a specific file path chosen by the user
+pub fn save_prompt_to_specific_path(prompt_text: &str, file_path: &str) -> io::Result<()> {
+    // Open the file for writing
+    let mut file = File::create(file_path)?;
+
+    // Write the prompt content to the file
+    file.write_all(prompt_text.as_bytes())?;
+
+    println!("✅ Prompt successfully saved at: {}", file_path);
+
+    Ok(())
+}
