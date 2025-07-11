@@ -1,39 +1,223 @@
-import { VerticalBox, Button, LineEdit } from "std-widgets.slint";
-
+import { Button, VerticalBox, LineEdit, TextEdit, ScrollView} from "std-widgets.slint";
 export component AppWindow inherits Window {
-    title: "Prompt Builder GUI";
-    width: 600px;
-    height: 400px;
+    title: "Layout prompt_builder";
+    width: 1297px;
+    height: 700px;
 
-    VerticalBox {
-        spacing: 10px;
+    ScrollView {
 
-        LineEdit {
-            placeholder-text: "Digite o início do seu prompt aqui...";
-        }
+    VerticalLayout {
+        padding: 5px;
+        spacing: 4px;
 
-        Button {
-            text: "Gerar Prompt";
+    // Stretch by default (estica por padrão)
+    HorizontalLayout {
+        alignment: start;
+        spacing: 5px; // Espaçamento entre os elementos do layout
+        padding: 1px; // espaçamento entre os limites da janela
+       
+        // Midle Left Sidebar
+        Rectangle { 
+            property <color> blueColor;
+            blueColor: #13497c;
+            background: blueColor;    
+            width: 50px; // largura do sidebar
+            height: 600px;            
+           
+            // top left Sidebar
+            Rectangle { 
+            property <color> greenColor;
+            greenColor: #9ee6a8;
+            background: greenColor;
+            y: 0px; // distância topo e base
+            height: 70px; // altura do toolbar
+            max_width: 0px; // largura máxima do toolbar
+            
+            // top Midle Toolbar
+            Rectangle { 
+            property <color> whiteColor;
+            whiteColor: #fefefe;
+            background: whiteColor;
+            y: 70px; // distância topo e base
+            height: 5px; // altura do toolbar
+            max_width: 0px; 
         }
     }
 }
-
-
-/* import { Button, VerticalBox } from "std-widgets.slint";
-
-export component AppWindow inherits Window {
-    in-out property <int> counter: 42;
-    callback request-increase-value();
-    VerticalBox {
-        Text {
-            text: "Counter: \{root.counter}";
-        }
-
-        Button {
-            text: "Increase value";
-            clicked => {
-                root.request-increase-value();
-            }
+        
+        // This rectangle is the main content area
+        Rectangle {
+            property <color> grayColor;
+            background: grayColor;
+            grayColor: #878282;
+            width: 880px;
+            height: 600px;
+            
+            
+                VerticalBox { // VerticalBox para organizar os elementos verticalmente
+                alignment: start;
+                spacing: 3px; // Espaçamento entre os elementos do layout
+                padding: 3px; // espaçamento entre os limites da janela
+                y: 100px;
+                // Few-Shot Prompt input area     
+                TextEdit {
+                x: 5px; 
+                width: 873px;
+                height: 55px; // altura do TextEdit
+                font-size: 15px;
+                wrap: word-wrap; // quebra de linha automática
+                text: "Write your prompt here";
         }
     }
-} */
+            // Few_Shot toolbar instructions
+            Rectangle { 
+            property <color> grayColor;
+            grayColor: #cfc7c7;
+            background: grayColor;
+            x: 3px; // distância esquerda e direita
+            y: 79px; // distância topo e base
+            height: 20px; // altura do toolbar
+            width: 873px; 
+            padding: 5px;
+            
+            Text {
+                text: "Few-Shot: Ask your question and briefly comment on how the answer can help you.";
+                x: 5px; // distância esquerda
+                y: -1px; // distância do topo
+                color: black;
+                font-size: 12pt;
+                font-weight: 400;
+                font-family: "Comic Sans MS";
+                //horizontal-alignment: left;
+            }
+            
+        }
+        // Context and / or main character instructions
+        Rectangle { 
+            property <color> grayColor;
+            grayColor: #cfc7c7;
+            background: grayColor;
+            x: 3px; // distância esquerda e direita
+            y: 160px; // distância topo e base
+            height: 20px; // altura do toolbar
+            width: 873px; 
+            padding: 5px;
+            
+            Text {
+                text: "Context. Provide context or ask AI to be an expert on the situation.";
+                x: 5px; // distância esquerda
+                y: -1px; // distância do topo
+                color: black;
+                font-size: 12pt;
+                font-weight: 00;
+                font-family: "Comic Sans MS";
+                //horizontal-alignment: left;
+            }
+            TextEdit {
+                x: 0px;
+                y: 25px; // distância do topo 
+                width: 873px;
+                height: 55px; // altura do TextEdit
+                font-size: 15px;
+                wrap: word-wrap; // quebra de linha automática
+                text: "";
+            }
+
+        }
+
+         // Divider Toolbar central rectangle
+        Rectangle { 
+            property <color> whiteColor;
+            whiteColor: #fefefe;
+            background: whiteColor;
+            y: 60px; // distância topo e base
+            height: 15px; // altura do toolbar
+            max_width: 0px; 
+        } 
+
+        // Top Central Toolbar    
+        Rectangle { 
+            property <color> blueColor;
+            blueColor: #9ee6a8;
+            background: blueColor;
+            y: 0px; // distância topo e base
+            height: 70px; // altura do toolbar
+            max_width: 0px; // largura máxima do toolbar
+
+            Text {  
+            y: -8px; // distância do topo
+            text: "Prompt Builder";
+            color: black;
+            font-size: 40pt;
+            font-weight: 800; // Negrito determinado por valor personalizado
+            font-family: "Comic Sans MS";
+            horizontal-alignment: center;
+            letter-spacing: 4px; // Espaçamento entre letras      
+            }
+
+        }
+
+    }
+              
+        Rectangle {
+            
+            //y: 10px; // distância topo e base
+            property <color> blueColor;
+            blueColor: #13497c;
+            background: blueColor;
+            width: 345px;
+            height: 600px;
+            
+            // Top Right toolbar
+            Rectangle { 
+            property <color> blueColor;
+            blueColor: #9ee6a8;
+            background: blueColor;
+            y: 0px; // distância topo e base
+            height: 70px; // altura do toolbar
+            max_width: 0px; // largura máxima do toolbar
+
+            Text {  
+            y: 15px; // distância do topo
+            text: "Preview";
+            color: black;
+            font-size: 20pt;
+            font-weight: 800; // Negrito determinado por valor personalizado
+            font-family: "Comic Sans MS";
+            horizontal-alignment: center;
+}
+
+            Rectangle { 
+            property <color> whiteColor;
+            whiteColor: #fefefe;
+            background: whiteColor;
+            y: 70px; // distância topo e base
+            height: 5px; // altura do toolbar
+            max_width: 0px; 
+        }    
+        
+        }
+
+            
+        }
+    }
+        // Base Toolbar
+        Rectangle {
+            property <color> greenColor;
+            greenColor: #9ee6a8;
+            background: greenColor;
+            width: 1286px;
+            height: 40px;
+     }
+            // Base Toolbar
+          Rectangle {
+            property <color> greenColor;
+            greenColor: #65aa6e;
+            background: greenColor;
+            width: 1286px;
+            height: 40px;
+            
+     } // Base Toolbar
+} // Verticallayout
+} // Scrollview
+} // 
