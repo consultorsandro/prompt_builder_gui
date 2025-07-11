@@ -8,6 +8,7 @@ edition = "2021"
 [dependencies]
 slint = "1.8.0"
 copypasta = "0.10"
+rfd = "0.15"
 
 [build-dependencies]
 slint-build = "1.8.0"

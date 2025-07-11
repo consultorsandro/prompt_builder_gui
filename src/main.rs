@@ -4,6 +4,7 @@ use std::error::Error;
 use std::rc::Rc;
 use std::cell::RefCell;
 use copypasta::{ClipboardContext, ClipboardProvider};
+use rfd::FileDialog;
 
 mod models;
 mod services;
@@ -21,7 +22,7 @@ use models::{
 };
 use services::{
     prompt_generator::PromptData,
-    file_service::save_prompt_to_file,
+    file_service::save_prompt_to_specific_path,
 };
 
 slint::include_modules!();
@@ -111,16 +112,25 @@ fn main() -> Result<(), Box<dyn Error>> {
     let ui_weak2 = ui.as_weak();
     let prompt_data_clone2 = prompt_data.clone();
     ui.on_save_prompt(move || {
-        let ui = ui_weak2.unwrap();
+        let _ui = ui_weak2.unwrap();
         let data = prompt_data_clone2.borrow();
         
         let prompt_text = data.build_prompt(false);
-        let output_dir = std::env::current_dir().unwrap_or_default();
-        let output_dir_str = output_dir.to_string_lossy();
         
-        match save_prompt_to_file(&prompt_text, &output_dir_str, "generated_prompt") {
-            Ok(_) => println!("✅ Prompt salvo com sucesso!"),
-            Err(e) => eprintln!("❌ Erro ao salvar prompt: {}", e),
+        // Open file dialog to choose save location
+        if let Some(file_path) = FileDialog::new()
+            .set_title("Salvar Prompt")
+            .set_file_name("generated_prompt.txt")
+            .add_filter("Arquivo de Texto", &["txt"])
+            .add_filter("Todos os Arquivos", &["*"])
+            .save_file()
+        {
+            match save_prompt_to_specific_path(&prompt_text, &file_path.to_string_lossy()) {
+                Ok(_) => println!("✅ Prompt salvo com sucesso em: {:?}", file_path),
+                Err(e) => eprintln!("❌ Erro ao salvar prompt: {}", e),
+            }
+        } else {
+            println!("💭 Salvamento cancelado pelo usuário");
         }
     });
 
