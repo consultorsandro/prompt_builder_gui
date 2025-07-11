@@ -96,6 +96,17 @@ impl PromptData {
         }
     }
 
+    /// Helper function to remove section markers like <START_> and <END_>
+    fn remove_markers(text: &str) -> String {
+        let mut cleaned_lines: Vec<String> = Vec::new();
+        for line in text.lines() {
+            if !line.starts_with("<START_") && !line.starts_with("<END_") {
+                cleaned_lines.push(line.to_string());
+            }
+        }
+        cleaned_lines.join("\n")
+    }
+
     /// Builds a clean prompt for preview with section titles instead of markers
     pub fn build_preview_prompt(&self) -> String {
         let mut sections: Vec<String> = Vec::new();
@@ -162,16 +173,5 @@ impl PromptData {
             sections.push("📋 **Nota:** Ao copiar ou salvar, apenas o texto do prompt será incluído, sem os subtítulos ou marcações acima.".to_string());
             sections.join("\n\n")
         }
-    }
-
-    /// Helper function to remove section markers like <START_SECTION> and <END_SECTION>
-    fn remove_markers(text: &str) -> String {
-        let mut cleaned_lines: Vec<String> = Vec::new();
-        for line in text.lines() {
-            if !line.starts_with("<START_") && !line.starts_with("<END_") {
-                cleaned_lines.push(line.to_string());
-            }
-        }
-        cleaned_lines.join("\n")
     }
 }
