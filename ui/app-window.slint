@@ -282,11 +282,18 @@ export component AppWindow inherits Window {
                 }
 
                 ScrollView {
-                    TextEdit {
-                        text: preview_text;
-                        read-only: true;
-                        font-size: 12px;
-                        wrap: word-wrap;
+                    Rectangle {
+                        background: white;
+                        border-radius: 4px;
+                        padding: 10px;
+                        
+                        Text {
+                            text: preview_text;
+                            font-size: 12px;
+                            wrap: word-wrap;
+                            color: black;
+                            width: 100%;
+                        }
                     }
                 }
             }

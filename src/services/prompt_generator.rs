@@ -89,7 +89,11 @@ impl PromptData {
             sections.push(if include_section_markers { text } else { Self::remove_markers(&text) });
         }
 
-        sections.join("\n")
+        if sections.is_empty() {
+            "Nenhum campo foi preenchido ainda.".to_string()
+        } else {
+            sections.join("\n\n")
+        }
     }
 
     /// Helper function to remove section markers like <START_SECTION> and <END_SECTION>
