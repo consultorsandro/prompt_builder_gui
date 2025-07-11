@@ -1,0 +1,5 @@
+Input Example:
+testo de teste
+Expected Output:
+
+texto de teste para o prompt.

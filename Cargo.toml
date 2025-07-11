@@ -1,5 +1,5 @@
 [package]
-name = "slint-rust-template"
+name = "prompt-builder-gui"
 version = "0.1.0"
 edition = "2021"
 
@@ -7,6 +7,7 @@ edition = "2021"
 
 [dependencies]
 slint = "1.8.0"
+copypasta = "0.10"
 
 [build-dependencies]
 slint-build = "1.8.0"

@@ -1,38 +1,67 @@
-# Slint Rust Template
+# Prompt Builder GUI
 
-A template for a Rust application that's using [Slint](https://slint.rs/) for the user interface.
+Uma aplicação desktop em Rust para construção de prompts estruturados para IA, usando [Slint](https://slint.rs/) como framework para interface gráfica.
 
-## About
+## Sobre o Projeto
 
-This template helps you get started developing a Rust application with Slint as toolkit
-for the user interface. It demonstrates the integration between the `.slint` UI markup and
-Rust code, how to react to callbacks, get and set properties, and use basic widgets.
+Este projeto ajuda você a criar prompts bem estruturados para interações com IA, organizando diferentes seções como:
 
-## Usage
+- **Few-Shot**: Exemplos de entrada e saída esperada
+- **Context**: Contexto ou persona da IA
+- **Main Content**: Instruções principais
+- **Auxiliary Content**: Conteúdo auxiliar e exemplos
+- **Limitations**: Limitações e restrições
+- **Refactoring**: Instruções de refatoração (para código)
+- **Guidance**: Orientações de tom e estilo
+- **Tests**: Requisitos de teste
+- **Output Format**: Formato de saída desejado
 
-1. Install Rust by following its [getting-started guide](https://www.rust-lang.org/learn/get-started).
-   Once this is done, you should have the `rustc` compiler and the `cargo` build system installed in your `PATH`.
-2. Download and extract the [ZIP archive of this repository](https://github.com/slint-ui/slint-rust-template/archive/refs/heads/main.zip).
-3. Rename the extracted directory and change into it:
-    ```
-    mv slint-rust-template-main my-project
-    cd my-project    
-    ```
-4. Build with `cargo`:
-    ```
-    cargo build
-    ```
-5. Run the application binary:
-    ```
-    cargo run
-    ```
+## Estrutura do Projeto
 
-We recommend using an IDE for development, along with our [LSP-based IDE integration for `.slint` files](https://github.com/slint-ui/slint/blob/master/tools/lsp/README.md). You can also load this project directly in [Visual Studio Code](https://code.visualstudio.com) and install our [Slint extension](https://marketplace.visualstudio.com/items?itemName=Slint.slint).
+```
+src/
+├── main.rs              # Ponto de entrada da aplicação
+├── models/              # Modelos de dados para seções do prompt
+│   ├── few_shot.rs
+│   ├── context.rs
+│   ├── main_content.rs
+│   ├── auxiliary_content.rs
+│   ├── limitations.rs
+│   ├── refactoring.rs
+│   ├── guidance.rs
+│   ├── tests.rs
+│   ├── output_format.rs
+│   └── mod.rs
+└── services/            # Serviços para processamento e arquivos
+    ├── prompt_generator.rs  # Geração de prompts
+    ├── file_service.rs      # Salvamento de arquivos
+    └── mod.rs
+ui/
+└── app-window.slint     # Interface gráfica
+```
 
-## Next Steps
+## Como Usar
 
-We hope that this template helps you get started, and that you enjoy exploring making user interfaces with Slint. To learn more
-about the Slint APIs and the `.slint` markup language, check out our [online documentation](https://slint.dev/docs).
+1. Instale o Rust seguindo o [guia oficial](https://www.rust-lang.org/learn/get-started)
+2. Clone este repositório
+3. Execute o projeto:
+   ```bash
+   cargo run
+   ```
 
-Don't forget to edit this readme to replace it by yours, and edit the `name =` field in `Cargo.toml` to match the name of your
-project.
+## Desenvolvimento
+
+Para desenvolver este projeto, recomendamos usar VS Code com a [extensão Slint](https://marketplace.visualstudio.com/items?itemName=Slint.slint) para suporte a arquivos `.slint`.
+
+## Próximos Passos
+
+- [ ] Conectar interface gráfica com a lógica Rust
+- [ ] Implementar callbacks da UI
+- [ ] Adicionar funcionalidade de preview em tempo real
+- [ ] Implementar salvamento e carregamento de prompts
+- [ ] Adicionar mais seções personalizáveis
+- [ ] Melhorar o design da interface
+
+## Licença
+
+MIT License - veja o arquivo [LICENSE](LICENSE) para detalhes.
