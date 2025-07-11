@@ -1,223 +1,295 @@
-import { Button, VerticalBox, LineEdit, TextEdit, ScrollView} from "std-widgets.slint";
+import { Button, VerticalBox, LineEdit, TextEdit, ScrollView, CheckBox } from "std-widgets.slint";
+
 export component AppWindow inherits Window {
-    title: "Layout prompt_builder";
-    width: 1297px;
-    height: 700px;
+    title: "Prompt Builder GUI";
+    width: 1400px;
+    height: 800px;
+    background: #e3f2fd;
 
-    ScrollView {
+    // Properties for data binding - make them public
+    in-out property <string> few_shot_text: "";
+    in-out property <string> context_text: "";
+    in-out property <string> main_content_text: "";
+    in-out property <string> auxiliary_content_text: "";
+    in-out property <string> limitations_text: "";
+    in-out property <string> refactoring_text: "";
+    in-out property <string> guidance_text: "";
+    in-out property <string> tests_text: "";
+    in-out property <string> output_format_text: "";
+    in-out property <string> preview_text: "O preview do prompt aparecerá aqui...";
 
-    VerticalLayout {
-        padding: 5px;
-        spacing: 4px;
+    // Callbacks
+    callback generate_prompt();
+    callback save_prompt();
+    callback clear_all();
+    callback copy_to_clipboard();
 
-    // Stretch by default (estica por padrão)
     HorizontalLayout {
-        alignment: start;
-        spacing: 5px; // Espaçamento entre os elementos do layout
-        padding: 1px; // espaçamento entre os limites da janela
-       
-        // Midle Left Sidebar
-        Rectangle { 
-            property <color> blueColor;
-            blueColor: #13497c;
-            background: blueColor;    
-            width: 50px; // largura do sidebar
-            height: 600px;            
-           
-            // top left Sidebar
-            Rectangle { 
-            property <color> greenColor;
-            greenColor: #9ee6a8;
-            background: greenColor;
-            y: 0px; // distância topo e base
-            height: 70px; // altura do toolbar
-            max_width: 0px; // largura máxima do toolbar
-            
-            // top Midle Toolbar
-            Rectangle { 
-            property <color> whiteColor;
-            whiteColor: #fefefe;
-            background: whiteColor;
-            y: 70px; // distância topo e base
-            height: 5px; // altura do toolbar
-            max_width: 0px; 
-        }
-    }
-}
-        
-        // This rectangle is the main content area
+        spacing: 10px;
+        padding: 10px;
+
+        // Left Panel - Input Forms
         Rectangle {
-            property <color> grayColor;
-            background: grayColor;
-            grayColor: #878282;
-            width: 880px;
-            height: 600px;
+            background: #f0f8ff;
+            border-radius: 12px;
+            border-width: 2px;
+            border-color: #b3d9ff;
+            drop-shadow-blur: 6px;
+            drop-shadow-color: #00000015;
+            width: 60%;
             
-            
-                VerticalBox { // VerticalBox para organizar os elementos verticalmente
-                alignment: start;
-                spacing: 3px; // Espaçamento entre os elementos do layout
-                padding: 3px; // espaçamento entre os limites da janela
-                y: 100px;
-                // Few-Shot Prompt input area     
-                TextEdit {
-                x: 5px; 
-                width: 873px;
-                height: 55px; // altura do TextEdit
-                font-size: 15px;
-                wrap: word-wrap; // quebra de linha automática
-                text: "Write your prompt here";
-        }
-    }
-            // Few_Shot toolbar instructions
-            Rectangle { 
-            property <color> grayColor;
-            grayColor: #cfc7c7;
-            background: grayColor;
-            x: 3px; // distância esquerda e direita
-            y: 79px; // distância topo e base
-            height: 20px; // altura do toolbar
-            width: 873px; 
-            padding: 5px;
-            
-            Text {
-                text: "Few-Shot: Ask your question and briefly comment on how the answer can help you.";
-                x: 5px; // distância esquerda
-                y: -1px; // distância do topo
-                color: black;
-                font-size: 12pt;
-                font-weight: 400;
-                font-family: "Comic Sans MS";
-                //horizontal-alignment: left;
+            ScrollView {
+                VerticalLayout {
+                    spacing: 15px;
+                    padding: 20px;
+
+                    // Header
+                    Text {
+                        text: "Prompt Builder";
+                        font-size: 28px;
+                        font-weight: 700;
+                        color: #1565c0;
+                        horizontal-alignment: center;
+                    }
+
+                    // Few-Shot Section
+                    VerticalLayout {
+                        spacing: 5px;
+                        Text {
+                            text: "Few-Shot Examples";
+                            font-size: 16px;
+                            font-weight: 600;
+                            color: #2e7d32;
+                        }
+                        Text {
+                            text: "Forneça exemplos de entrada e saída esperada";
+                            font-size: 12px;
+                            color: #558b2f;
+                        }
+                        TextEdit {
+                            height: 80px;
+                            text <=> few_shot_text;
+                            placeholder-text: "Exemplo: Input: Pergunta sobre X\nOutput: Resposta detalhada sobre X";
+                        }
+                    }
+
+                    // Context Section
+                    VerticalLayout {
+                        spacing: 5px;
+                        Text {
+                            text: "Contexto";
+                            font-size: 16px;
+                            font-weight: 600;
+                            color: #2e7d32;
+                        }
+                        Text {
+                            text: "Defina o contexto ou persona da IA";
+                            font-size: 12px;
+                            color: #558b2f;
+                        }
+                        TextEdit {
+                            height: 80px;
+                            text <=> context_text;
+                            placeholder-text: "Exemplo: Você é um especialista em...";
+                        }
+                    }
+
+                    // Main Content Section
+                    VerticalLayout {
+                        spacing: 5px;
+                        Text {
+                            text: "Conteúdo Principal";
+                            font-size: 16px;
+                            font-weight: 600;
+                            color: #2e7d32;
+                        }
+                        Text {
+                            text: "Instruções principais para a IA";
+                            font-size: 12px;
+                            color: #558b2f;
+                        }
+                        TextEdit {
+                            height: 100px;
+                            text <=> main_content_text;
+                            placeholder-text: "Descreva a tarefa principal que a IA deve executar...";
+                        }
+                    }
+
+                    // Auxiliary Content Section
+                    VerticalLayout {
+                        spacing: 5px;
+                        Text {
+                            text: "Conteúdo Auxiliar";
+                            font-size: 16px;
+                            font-weight: 600;
+                            color: #2e7d32;
+                        }
+                        Text {
+                            text: "Informações adicionais e exemplos";
+                            font-size: 12px;
+                            color: #558b2f;
+                        }
+                        TextEdit {
+                            height: 60px;
+                            text <=> auxiliary_content_text;
+                            placeholder-text: "Informações de suporte, referências, etc.";
+                        }
+                    }
+
+                    // Limitations Section
+                    VerticalLayout {
+                        spacing: 5px;
+                        Text {
+                            text: "Limitações";
+                            font-size: 16px;
+                            font-weight: 600;
+                            color: #2e7d32;
+                        }
+                        Text {
+                            text: "Restrições e limitações a serem observadas";
+                            font-size: 12px;
+                            color: #558b2f;
+                        }
+                        TextEdit {
+                            height: 60px;
+                            text <=> limitations_text;
+                            placeholder-text: "Não faça X, evite Y, limite Z...";
+                        }
+                    }
+
+                    // Optional Sections
+                    HorizontalLayout {
+                        spacing: 20px;
+                        
+                        VerticalLayout {
+                            width: 50%;
+                            spacing: 5px;
+                            Text {
+                                text: "Refatoração (Código)";
+                                font-size: 14px;
+                                font-weight: 600;
+                                color: #1976d2;
+                            }
+                            TextEdit {
+                                height: 50px;
+                                text <=> refactoring_text;
+                                placeholder-text: "Instruções de refatoração...";
+                            }
+                        }
+
+                        VerticalLayout {
+                            width: 50%;
+                            spacing: 5px;
+                            Text {
+                                text: "Orientações";
+                                font-size: 14px;
+                                font-weight: 600;
+                                color: #1976d2;
+                            }
+                            TextEdit {
+                                height: 50px;
+                                text <=> guidance_text;
+                                placeholder-text: "Tom, estilo, público-alvo...";
+                            }
+                        }
+                    }
+
+                    HorizontalLayout {
+                        spacing: 20px;
+                        
+                        VerticalLayout {
+                            width: 50%;
+                            spacing: 5px;
+                            Text {
+                                text: "Testes";
+                                font-size: 14px;
+                                font-weight: 600;
+                                color: #1976d2;
+                            }
+                            TextEdit {
+                                height: 50px;
+                                text <=> tests_text;
+                                placeholder-text: "Requisitos de teste...";
+                            }
+                        }
+
+                        VerticalLayout {
+                            width: 50%;
+                            spacing: 5px;
+                            Text {
+                                text: "Formato de Saída";
+                                font-size: 14px;
+                                font-weight: 600;
+                                color: #1976d2;
+                            }
+                            TextEdit {
+                                height: 50px;
+                                text <=> output_format_text;
+                                placeholder-text: "Markdown, JSON, texto...";
+                            }
+                        }
+                    }
+
+                    // Action Buttons
+                    HorizontalLayout {
+                        spacing: 10px;
+                        padding-top: 20px;
+                        
+                        Button {
+                            text: "🚀 Gerar Prompt";
+                            clicked => { generate_prompt(); }
+                        }
+                        
+                        Button {
+                            text: "💾 Salvar";
+                            clicked => { save_prompt(); }
+                        }
+                        
+                        Button {
+                            text: "📋 Copiar";
+                            clicked => { copy_to_clipboard(); }
+                        }
+                        
+                        Button {
+                            text: "🗑️ Limpar Tudo";
+                            clicked => { clear_all(); }
+                        }
+                    }
+                }
             }
-            
-        }
-        // Context and / or main character instructions
-        Rectangle { 
-            property <color> grayColor;
-            grayColor: #cfc7c7;
-            background: grayColor;
-            x: 3px; // distância esquerda e direita
-            y: 160px; // distância topo e base
-            height: 20px; // altura do toolbar
-            width: 873px; 
-            padding: 5px;
-            
-            Text {
-                text: "Context. Provide context or ask AI to be an expert on the situation.";
-                x: 5px; // distância esquerda
-                y: -1px; // distância do topo
-                color: black;
-                font-size: 12pt;
-                font-weight: 00;
-                font-family: "Comic Sans MS";
-                //horizontal-alignment: left;
-            }
-            TextEdit {
-                x: 0px;
-                y: 25px; // distância do topo 
-                width: 873px;
-                height: 55px; // altura do TextEdit
-                font-size: 15px;
-                wrap: word-wrap; // quebra de linha automática
-                text: "";
-            }
-
         }
 
-         // Divider Toolbar central rectangle
-        Rectangle { 
-            property <color> whiteColor;
-            whiteColor: #fefefe;
-            background: whiteColor;
-            y: 60px; // distância topo e base
-            height: 15px; // altura do toolbar
-            max_width: 0px; 
-        } 
-
-        // Top Central Toolbar    
-        Rectangle { 
-            property <color> blueColor;
-            blueColor: #9ee6a8;
-            background: blueColor;
-            y: 0px; // distância topo e base
-            height: 70px; // altura do toolbar
-            max_width: 0px; // largura máxima do toolbar
-
-            Text {  
-            y: -8px; // distância do topo
-            text: "Prompt Builder";
-            color: black;
-            font-size: 40pt;
-            font-weight: 800; // Negrito determinado por valor personalizado
-            font-family: "Comic Sans MS";
-            horizontal-alignment: center;
-            letter-spacing: 4px; // Espaçamento entre letras      
-            }
-
-        }
-
-    }
-              
+        // Right Panel - Preview
         Rectangle {
+            background: #e8f5e8;
+            border-radius: 12px;
+            border-width: 2px;
+            border-color: #a5d6a7;
+            drop-shadow-blur: 6px;
+            drop-shadow-color: #00000015;
+            width: 40%;
             
-            //y: 10px; // distância topo e base
-            property <color> blueColor;
-            blueColor: #13497c;
-            background: blueColor;
-            width: 345px;
-            height: 600px;
-            
-            // Top Right toolbar
-            Rectangle { 
-            property <color> blueColor;
-            blueColor: #9ee6a8;
-            background: blueColor;
-            y: 0px; // distância topo e base
-            height: 70px; // altura do toolbar
-            max_width: 0px; // largura máxima do toolbar
+            VerticalLayout {
+                spacing: 10px;
+                padding: 20px;
 
-            Text {  
-            y: 15px; // distância do topo
-            text: "Preview";
-            color: black;
-            font-size: 20pt;
-            font-weight: 800; // Negrito determinado por valor personalizado
-            font-family: "Comic Sans MS";
-            horizontal-alignment: center;
-}
+                Text {
+                    text: "📄 Preview do Prompt";
+                    font-size: 20px;
+                    font-weight: 600;
+                    color: #1b5e20;
+                    horizontal-alignment: center;
+                }
 
-            Rectangle { 
-            property <color> whiteColor;
-            whiteColor: #fefefe;
-            background: whiteColor;
-            y: 70px; // distância topo e base
-            height: 5px; // altura do toolbar
-            max_width: 0px; 
-        }    
-        
-        }
-
-            
+                ScrollView {
+                    TextEdit {
+                        text: preview_text;
+                        read-only: true;
+                        font-size: 12px;
+                        wrap: word-wrap;
+                    }
+                }
+            }
         }
     }
-        // Base Toolbar
-        Rectangle {
-            property <color> greenColor;
-            greenColor: #9ee6a8;
-            background: greenColor;
-            width: 1286px;
-            height: 40px;
-     }
-            // Base Toolbar
-          Rectangle {
-            property <color> greenColor;
-            greenColor: #65aa6e;
-            background: greenColor;
-            width: 1286px;
-            height: 40px;
-            
-     } // Base Toolbar
-} // Verticallayout
-} // Scrollview
-} // 
+} 
