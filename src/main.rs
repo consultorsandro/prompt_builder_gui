@@ -74,8 +74,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         if !few_shot_val.trim().is_empty() {
             println!("✅ Adicionando Few-shot");
             let mut few_shot = FewShot::new();
-            few_shot.example_input = few_shot_val;
-            few_shot.expected_output = "".to_string();
+            few_shot.content = few_shot_val;
             data.few_shot = Some(few_shot);
         }
         
