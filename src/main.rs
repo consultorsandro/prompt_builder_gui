@@ -134,8 +134,8 @@ fn main() -> Result<(), Box<dyn Error>> {
             data.output_format = Some(output_format);
         }
         
-        // Generate the prompt with section markers for better visibility in preview
-        let generated_prompt = data.build_prompt(true);
+        // Generate the prompt with clean formatting for preview
+        let generated_prompt = data.build_preview_prompt();
         
         // Debug: print generated prompt to console
         println!("📝 Prompt gerado ({} caracteres):\n{}", generated_prompt.len(), generated_prompt);
