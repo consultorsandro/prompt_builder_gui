@@ -1,29 +1,20 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-use std::error::Error;
-use std::rc::Rc;
-use std::cell::RefCell;
 use copypasta::{ClipboardContext, ClipboardProvider};
 use rfd::FileDialog;
+use std::cell::RefCell;
+use std::error::Error;
+use std::rc::Rc;
 
 mod models;
 mod services;
 
 use models::{
-    few_shot::FewShot,
-    context::Context,
-    main_content::MainContent,
-    auxiliary_content::AuxiliaryContent,
-    limitations::Limitations,
-    refactoring::Refactoring,
-    guidance::Guidance,
-    tests::Tests,
-    output_format::OutputFormat,
+    auxiliary_content::AuxiliaryContent, context::Context, few_shot::FewShot, guidance::Guidance,
+    limitations::Limitations, main_content::MainContent, output_format::OutputFormat,
+    refactoring::Refactoring, tests::Tests,
 };
-use services::{
-    prompt_generator::PromptData,
-    file_service::save_prompt_to_specific_path,
-};
+use services::{file_service::save_prompt_to_specific_path, prompt_generator::PromptData};
 
 slint::include_modules!();
 
@@ -32,15 +23,15 @@ fn parse_prompt_content(content: &str, ui: &AppWindow, data: &mut PromptData) {
     let lines: Vec<&str> = content.lines().collect();
     let mut current_section = "";
     let mut section_content = String::new();
-    
+
     // Check if the file has section headers (structured format)
     let has_headers = content.contains("## ");
-    
+
     if has_headers {
         // Parse structured format with headers
         for line in lines {
             let line = line.trim();
-            
+
             // Check for section headers
             if line.starts_with("## Few-shot") {
                 save_current_section(current_section, &section_content, ui, data);
@@ -89,7 +80,7 @@ fn parse_prompt_content(content: &str, ui: &AppWindow, data: &mut PromptData) {
                 section_content.push_str(line);
             }
         }
-        
+
         // Save the last section
         save_current_section(current_section, &section_content, ui, data);
     } else {
@@ -104,8 +95,11 @@ fn parse_prompt_content(content: &str, ui: &AppWindow, data: &mut PromptData) {
 
 // Parse simple format files by trying to intelligently distribute content
 fn parse_simple_format(content: &str, ui: &AppWindow, data: &mut PromptData) {
-    let paragraphs: Vec<&str> = content.split("\n\n").filter(|p| !p.trim().is_empty()).collect();
-    
+    let paragraphs: Vec<&str> = content
+        .split("\n\n")
+        .filter(|p| !p.trim().is_empty())
+        .collect();
+
     if paragraphs.len() == 1 {
         // Single paragraph - put in main content
         let text = paragraphs[0].trim();
@@ -116,19 +110,26 @@ fn parse_simple_format(content: &str, ui: &AppWindow, data: &mut PromptData) {
         data.main_content = Some(main_content);
     } else {
         // Multiple paragraphs - distribute intelligently
-        println!("📝 Múltiplos parágrafos ({}) - distribuindo inteligentemente", paragraphs.len());
-        
+        println!(
+            "📝 Múltiplos parágrafos ({}) - distribuindo inteligentemente",
+            paragraphs.len()
+        );
+
         for (i, paragraph) in paragraphs.iter().enumerate() {
             let text = paragraph.trim();
             if text.is_empty() {
                 continue;
             }
-            
+
             // Distribute based on position and content
             match i {
                 0 => {
                     // First paragraph - likely context or introduction
-                    if text.len() > 200 && (text.contains("você é") || text.contains("assistente") || text.contains("especializado")) {
+                    if text.len() > 200
+                        && (text.contains("você é")
+                            || text.contains("assistente")
+                            || text.contains("especializado"))
+                    {
                         // Looks like context
                         println!("📝 Parágrafo 1 -> Contexto (detecção automática)");
                         ui.set_context_text(text.into());
@@ -143,7 +144,7 @@ fn parse_simple_format(content: &str, ui: &AppWindow, data: &mut PromptData) {
                         main_content.instructions = text.to_string();
                         data.main_content = Some(main_content);
                     }
-                },
+                }
                 1 => {
                     // Second paragraph
                     if data.main_content.is_none() {
@@ -161,7 +162,7 @@ fn parse_simple_format(content: &str, ui: &AppWindow, data: &mut PromptData) {
                         auxiliary.data = text.to_string();
                         data.auxiliary_content = Some(auxiliary);
                     }
-                },
+                }
                 2 => {
                     // Third paragraph - auxiliary or guidance
                     if text.contains("sempre") || text.contains("quando") || text.contains("use") {
@@ -177,7 +178,7 @@ fn parse_simple_format(content: &str, ui: &AppWindow, data: &mut PromptData) {
                         auxiliary.data = text.to_string();
                         data.auxiliary_content = Some(auxiliary);
                     }
-                },
+                }
                 _ => {
                     // Additional paragraphs - put in auxiliary content
                     println!("📝 Parágrafo {} -> Conteúdo Auxiliar", i + 1);
@@ -203,7 +204,7 @@ fn save_current_section(section: &str, content: &str, ui: &AppWindow, data: &mut
     if trimmed_content.is_empty() {
         return;
     }
-    
+
     match section {
         "few_shot" => {
             ui.set_few_shot_text(trimmed_content.into());
@@ -272,17 +273,17 @@ fn main() -> Result<(), Box<dyn Error>> {
     // Set up callbacks for UI events
     let ui_weak = ui.as_weak();
     let prompt_data_clone = prompt_data.clone();
-    
+
     // Generate prompt callback
     ui.on_generate_prompt(move || {
         let ui = ui_weak.unwrap();
         let mut data = prompt_data_clone.borrow_mut();
-        
+
         // Clear previous data
         *data = PromptData::new();
-        
+
         println!("🔄 Gerando preview do prompt...");
-        
+
         // Collect all field values first
         let few_shot_val = ui.get_few_shot_text().to_string();
         let context_val = ui.get_context_text().to_string();
@@ -293,7 +294,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         let guidance_val = ui.get_guidance_text().to_string();
         let tests_val = ui.get_tests_text().to_string();
         let output_format_val = ui.get_output_format_text().to_string();
-        
+
         // Debug: Check if UI values are being read
         println!("📝 Valores dos campos:");
         println!("  Few-shot: '{}'", few_shot_val);
@@ -305,7 +306,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         println!("  Guidance: '{}'", guidance_val);
         println!("  Tests: '{}'", tests_val);
         println!("  Output format: '{}'", output_format_val);
-        
+
         // Update prompt data with UI values
         if !few_shot_val.trim().is_empty() {
             println!("✅ Adicionando Few-shot");
@@ -313,69 +314,73 @@ fn main() -> Result<(), Box<dyn Error>> {
             few_shot.content = few_shot_val;
             data.few_shot = Some(few_shot);
         }
-        
+
         if !context_val.trim().is_empty() {
             println!("✅ Adicionando Context");
             let mut context = Context::new();
             context.description = context_val;
             data.context = Some(context);
         }
-        
+
         if !main_content_val.trim().is_empty() {
             println!("✅ Adicionando Main Content");
             let mut main_content = MainContent::new();
             main_content.instructions = main_content_val;
             data.main_content = Some(main_content);
         }
-        
+
         if !auxiliary_val.trim().is_empty() {
             println!("✅ Adicionando Auxiliary Content");
             let mut aux_content = AuxiliaryContent::new();
             aux_content.data = auxiliary_val;
             data.auxiliary_content = Some(aux_content);
         }
-        
+
         if !limitations_val.trim().is_empty() {
             println!("✅ Adicionando Limitations");
             let mut limitations = Limitations::new();
             limitations.text = limitations_val;
             data.limitations = Some(limitations);
         }
-        
+
         if !refactoring_val.trim().is_empty() {
             println!("✅ Adicionando Refactoring");
             let mut refactoring = Refactoring::new();
             refactoring.text = refactoring_val;
             data.refactoring = Some(refactoring);
         }
-        
+
         if !guidance_val.trim().is_empty() {
             println!("✅ Adicionando Guidance");
             let mut guidance = Guidance::new();
             guidance.text = guidance_val;
             data.guidance = Some(guidance);
         }
-        
+
         if !tests_val.trim().is_empty() {
             println!("✅ Adicionando Tests");
             let mut tests = Tests::new();
             tests.text = tests_val;
             data.tests = Some(tests);
         }
-        
+
         if !output_format_val.trim().is_empty() {
             println!("✅ Adicionando Output Format");
             let mut output_format = OutputFormat::new();
             output_format.text = output_format_val;
             data.output_format = Some(output_format);
         }
-        
+
         // Generate the prompt with clean formatting for preview
         let generated_prompt = data.build_preview_prompt();
-        
+
         // Debug: print generated prompt to console
-        println!("📝 Prompt gerado ({} caracteres):\n{}", generated_prompt.len(), generated_prompt);
-        
+        println!(
+            "📝 Prompt gerado ({} caracteres):\n{}",
+            generated_prompt.len(),
+            generated_prompt
+        );
+
         // Force update the preview regardless of content
         println!("🔄 Atualizando preview...");
         ui.set_preview_text(generated_prompt.into());
@@ -388,9 +393,9 @@ fn main() -> Result<(), Box<dyn Error>> {
     ui.on_save_prompt(move || {
         let _ui = ui_weak2.unwrap();
         let data = prompt_data_clone2.borrow();
-        
+
         let prompt_text = data.build_prompt(false); // Save without markers
-        
+
         // Open file dialog to choose save location
         if let Some(file_path) = FileDialog::new()
             .set_title("Salvar Prompt")
@@ -414,10 +419,10 @@ fn main() -> Result<(), Box<dyn Error>> {
     ui.on_clear_all(move || {
         let ui = ui_weak3.unwrap();
         let mut data = prompt_data_clone3.borrow_mut();
-        
+
         // Clear all data
         *data = PromptData::new();
-        
+
         // Clear UI fields
         ui.set_few_shot_text("".into());
         ui.set_context_text("".into());
@@ -430,24 +435,22 @@ fn main() -> Result<(), Box<dyn Error>> {
         ui.set_output_format_text("".into());
         ui.set_preview_text("O preview do prompt aparecerá aqui...".into());
     });
-    
+
     // Copy to clipboard callback
     let ui_weak4 = ui.as_weak();
     let prompt_data_clone4 = prompt_data.clone();
     ui.on_copy_to_clipboard(move || {
         let _ui = ui_weak4.unwrap();
         let data = prompt_data_clone4.borrow();
-        
+
         let prompt_text = data.build_prompt(false); // Copy without markers
-        
+
         // Try to copy to clipboard
         match ClipboardContext::new() {
-            Ok(mut ctx) => {
-                match ctx.set_contents(prompt_text) {
-                    Ok(_) => println!("✅ Prompt copiado para a área de transferência!"),
-                    Err(e) => eprintln!("❌ Erro ao copiar: {}", e),
-                }
-            }
+            Ok(mut ctx) => match ctx.set_contents(prompt_text) {
+                Ok(_) => println!("✅ Prompt copiado para a área de transferência!"),
+                Err(e) => eprintln!("❌ Erro ao copiar: {}", e),
+            },
             Err(e) => eprintln!("❌ Erro ao acessar área de transferência: {}", e),
         }
     });
@@ -458,9 +461,9 @@ fn main() -> Result<(), Box<dyn Error>> {
     ui.on_open_prompt(move || {
         let ui = ui_weak5.unwrap();
         let mut data = prompt_data_clone5.borrow_mut();
-        
+
         println!("📂 Abrindo dialog para selecionar arquivo...");
-        
+
         // Open file dialog
         if let Some(path) = FileDialog::new()
             .add_filter("Arquivos de texto", &["txt"])
@@ -468,12 +471,12 @@ fn main() -> Result<(), Box<dyn Error>> {
             .pick_file()
         {
             println!("📄 Arquivo selecionado: {:?}", path);
-            
+
             // Read file content
             match std::fs::read_to_string(&path) {
                 Ok(content) => {
                     println!("✅ Arquivo carregado com sucesso!");
-                    
+
                     // Clear current data and UI
                     *data = PromptData::new();
                     ui.set_few_shot_text("".into());
@@ -486,15 +489,15 @@ fn main() -> Result<(), Box<dyn Error>> {
                     ui.set_tests_text("".into());
                     ui.set_output_format_text("".into());
                     ui.set_preview_text("O preview do prompt aparecerá aqui...".into());
-                    
+
                     // Parse the content to extract sections
                     parse_prompt_content(&content, &ui, &mut data);
-                    
+
                     // Generate preview automatically after loading
                     println!("� Gerando preview automaticamente...");
                     let generated_prompt = data.build_preview_prompt();
                     ui.set_preview_text(generated_prompt.into());
-                    
+
                     println!("�📝 Prompt carregado, campos preenchidos e preview atualizado!");
                 }
                 Err(e) => {
@@ -510,4 +513,3 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     Ok(())
 }
-
