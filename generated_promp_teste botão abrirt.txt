@@ -1,0 +1,17 @@
+teste few-shot
+
+contexto
+
+Principal
+
+Auxiliar
+
+Limitações
+
+Refatoração
+
+Orientações
+
+Testes
+
+Saída

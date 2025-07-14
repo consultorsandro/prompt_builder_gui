@@ -21,6 +21,7 @@ export component AppWindow inherits Window {
     // Callbacks
     callback generate_prompt();
     callback save_prompt();
+    callback open_prompt();
     callback clear_all();
     callback copy_to_clipboard();
 
@@ -267,15 +268,18 @@ export component AppWindow inherits Window {
                     ScrollView {
                         Rectangle {
                             background: white;
-                            border-radius: 100px;
-                            padding: 5px;
+                            border-radius: 8px;
+                            border-width: 1px;
+                            border-color: #e0e0e0;
+                            padding: 15px;
                             
-                            Text {
+                            TextEdit {
                                 text: preview_text;
                                 font-size: 14px;
                                 wrap: word-wrap;
-                                color: black;
+                                read-only: true;
                                 width: 100%;
+                                height: 100%;
                             }
                         }
                     }
@@ -309,7 +313,14 @@ export component AppWindow inherits Window {
                 }
                 
                 Button {
-                    text: "💾 Salvar";
+                    text: "� Abrir";
+                    clicked => { open_prompt(); }
+                    preferred-width: 120px;
+                    height: 40px;
+                }
+                
+                Button {
+                    text: "�💾 Salvar";
                     clicked => { save_prompt(); }
                     preferred-width: 120px;
                     height: 40px;
