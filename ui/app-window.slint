@@ -34,7 +34,7 @@ export component AppWindow inherits Window {
 
             // Left Panel - Input Forms
             Rectangle {
-                background: #f0f8ff;
+                background: #d5e7f8;
                 border-radius: 12px;
                 border-width: 2px;
                 border-color: #b3d9ff;
@@ -67,7 +67,7 @@ export component AppWindow inherits Window {
                             }
                             Text {
                                 text: "Faça uma pergunta e exponha seu motivo de forma simples e resumida";
-                                font-size: 12px;
+                                font-size: 14px;
                                 color: #558b2f;
                             }
                             TextEdit {
@@ -88,7 +88,7 @@ export component AppWindow inherits Window {
                             }
                             Text {
                                 text: "Defina o contexto ou persona da IA";
-                                font-size: 12px;
+                                font-size: 14px;
                                 color: #558b2f;
                             }
                             TextEdit {
@@ -109,7 +109,7 @@ export component AppWindow inherits Window {
                             }
                             Text {
                                 text: "Instruções principais para a IA";
-                                font-size: 12px;
+                                font-size: 14px;
                                 color: #558b2f;
                             }
                             TextEdit {
@@ -130,7 +130,7 @@ export component AppWindow inherits Window {
                             }
                             Text {
                                 text: "Informações adicionais e exemplos";
-                                font-size: 12px;
+                                font-size: 14px;
                                 color: #558b2f;
                             }
                             TextEdit {
@@ -151,7 +151,7 @@ export component AppWindow inherits Window {
                             }
                             Text {
                                 text: "Restrições e limitações a serem observadas";
-                                font-size: 12px;
+                                font-size: 14px;
                                 color: #558b2f;
                             }
                             TextEdit {
@@ -241,25 +241,25 @@ export component AppWindow inherits Window {
 
             // Right Panel - Preview
             Rectangle {
-                background: #e8f5e8;
+                background: #c5e8c5;
                 border-radius: 12px;
                 border-width: 2px;
-                border-color: #a5d6a7;
+                border-color: #a3d7a5;
                 drop-shadow-blur: 6px;
                 drop-shadow-color: #00000015;
-                width: 40%;
+                width: 39%;
                 
                 VerticalLayout {
                     spacing: 10px;
-                    padding-left: 20px;
-                    padding-right: 5px;
+                    padding-left: 10px;
+                    padding-right: 10px;
                     padding-top: 20px;
                     padding-bottom: 20px;
 
                     Text {
                         text: "📄 Preview do Prompt";
                         font-size: 20px;
-                        font-weight: 600;
+                        font-weight: 700;
                         color: #1b5e20;
                         horizontal-alignment: center;
                     }
@@ -267,12 +267,12 @@ export component AppWindow inherits Window {
                     ScrollView {
                         Rectangle {
                             background: white;
-                            border-radius: 4px;
-                            padding: 10px;
+                            border-radius: 100px;
+                            padding: 5px;
                             
                             Text {
                                 text: preview_text;
-                                font-size: 12px;
+                                font-size: 14px;
                                 wrap: word-wrap;
                                 color: black;
                                 width: 100%;
@@ -285,7 +285,7 @@ export component AppWindow inherits Window {
 
         // Bottom Action Bar
         Rectangle {
-            background: #ffffff;
+            background: #d5e7f8;
             border-radius: 8px;
             border-width: 1px;
             border-color: #e0e0e0;

@@ -1,0 +1,13 @@
+Olá! Preciso que você seja um professor em Ciência da Computação.
+
+Tendo em vista que o projeto finalizado está muito grande para que eu possa estudá-lo sozinho, preciso que você crie um curso para que eu possa estudar todo o projeto ACTIX API CRUD. Divida o projeto em partes maiores, onde tecnicamente é possível reunir tarefas e recursos de um mesmo grupo, ou de uma mesma responsabilidade dentro do projeto. Procure dar ênfase à linguagem de programação Rust e ao framework ACTIX
+
+Gostaria que a explicação fosse detalhada e seguisse, sempre que possível, o uso mais recorrente do software. Mostre com clareza o uso do software na sua versão atual, pelo terminal.
+
+Você deve seguir as explicações procurando tratar primeiro cada um dos grandes grupos de recursos, conforme solicitei que você assim tratasse a abordagem do ensino, desde o início. Use sempre que possível, os códigos já existentes, evite ao máximo exemplos de código que não estejam presentes no projeto.  
+
+Você pode aproveitar qualquer arquivo da documentação já feita para explicar qualquer parte do projeto. Crie capítulos para tratar de forma organizada cada explicação de cada parte do projeto. Use uma linguagem para estudante de nível intermediário em linguagem Rust. 
+
+Explique também todos os testes que foram feitos não esquecendo de mostrar importância que cada um deles tem para o projeto. 
+
+Faça o texto do curso de forma técnica, porém com linguagem simples. O texto pode ser ricamente ilustrado, com uso de emojis e outros recursos visuais, desde que possam acrescentar compreensão e uma comunicação apropriada ao público jovem. Separe o curso em grandes unidades, cada unidade em quantos capítulos forem necessários, cada capítulo com tópicos e exemplos.    
