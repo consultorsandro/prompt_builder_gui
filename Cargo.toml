@@ -3,12 +3,23 @@ name = "prompt-builder-gui"
 version = "0.1.0"
 edition = "2021"
 
+[[bin]]
+name = "prompt-builder-gui"
+path = "src/main.rs"
+
+[lib]
+name = "prompt_builder_gui"
+path = "src/lib.rs"
+
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
 slint = "1.8.0"
 copypasta = "0.10"
 rfd = "0.15"
+
+[dev-dependencies]
+tempfile = "3.8"
 
 [build-dependencies]
 slint-build = "1.8.0"
