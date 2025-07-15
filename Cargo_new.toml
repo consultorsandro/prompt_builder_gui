@@ -1,0 +1,38 @@
+[package]
+name = "prompt-builder-gui"
+version = "1.0.0"
+edition = "2021"
+authors = ["Sandro <consultorsandro@example.com>"]
+description = "GUI moderna para construção de prompts estruturados para IA"
+license = "MIT"
+repository = "https://github.com/consultorsandro/prompt_builder_gui"
+keywords = ["gui", "prompt", "ai", "rust", "slint"]
+categories = ["gui", "development-tools"]
+
+# Configuração específica para Windows
+[target.'cfg(windows)'.build-dependencies]
+winres = "0.1"
+
+[[bin]]
+name = "prompt-builder-gui"
+path = "src/main.rs"
+
+[lib]
+name = "prompt_builder_gui"
+path = "src/lib.rs"
+
+[dependencies]
+slint = "1.8.0"
+copypasta = "0.10"
+rfd = "0.15"
+
+[dev-dependencies]
+tempfile = "3.8"
+
+[profile.release]
+# Otimizações para executável menor e mais rápido
+opt-level = 3
+lto = true
+codegen-units = 1
+panic = "abort"
+strip = true
