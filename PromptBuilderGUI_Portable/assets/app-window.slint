@@ -1,0 +1,345 @@
+import { Button, VerticalBox, LineEdit, TextEdit, ScrollView, CheckBox } from "std-widgets.slint";
+
+export component AppWindow inherits Window {
+    title: "Prompt Builder GUI";
+    width: 1400px;
+    height: 800px;
+    background: #e3f2fd;
+
+    // Properties for data binding - make them public
+    in-out property <string> few_shot_text: "";
+    in-out property <string> context_text: "";
+    in-out property <string> main_content_text: "";
+    in-out property <string> auxiliary_content_text: "";
+    in-out property <string> limitations_text: "";
+    in-out property <string> refactoring_text: "";
+    in-out property <string> guidance_text: "";
+    in-out property <string> tests_text: "";
+    in-out property <string> output_format_text: "";
+    in-out property <string> preview_text: "O preview do prompt aparecerá aqui...";
+
+    // Callbacks
+    callback generate_prompt();
+    callback save_prompt();
+    callback open_prompt();
+    callback clear_all();
+    callback copy_to_clipboard();
+
+    VerticalLayout {
+        spacing: 10px;
+        padding: 10px;
+
+        // Main Content Area
+        HorizontalLayout {
+            spacing: 10px;
+
+            // Left Panel - Input Forms
+            Rectangle {
+                background: #d5e7f8;
+                border-radius: 12px;
+                border-width: 2px;
+                border-color: #b3d9ff;
+                drop-shadow-blur: 6px;
+                drop-shadow-color: #00000015;
+                width: 60%;
+                
+                ScrollView {
+                    VerticalLayout {
+                        spacing: 15px;
+                        padding: 20px;
+
+                        // Header
+                        Text {
+                            text: "Prompt Builder";
+                            font-size: 28px;
+                            font-weight: 700;
+                            color: #1565c0;
+                            horizontal-alignment: center;
+                        }
+
+                        // Few-Shot Section
+                        VerticalLayout {
+                            spacing: 5px;
+                            Text {
+                                text: "Few-Shot Examples";
+                                font-size: 16px;
+                                font-weight: 600;
+                                color: #2e7d32;
+                            }
+                            Text {
+                                text: "Faça uma pergunta e exponha seu motivo de forma simples e resumida";
+                                font-size: 14px;
+                                color: #558b2f;
+                            }
+                            TextEdit {
+                                height: 80px;
+                                text <=> few_shot_text;
+                                placeholder-text: "Exemplo: Preciso de ajuda com programação Python porque estou iniciando na linguagem e quero criar um script para automatizar tarefas.";
+                            }
+                        }
+
+                        // Context Section
+                        VerticalLayout {
+                            spacing: 5px;
+                            Text {
+                                text: "Contexto";
+                                font-size: 16px;
+                                font-weight: 600;
+                                color: #2e7d32;
+                            }
+                            Text {
+                                text: "Defina o contexto ou persona da IA";
+                                font-size: 14px;
+                                color: #558b2f;
+                            }
+                            TextEdit {
+                                height: 80px;
+                                text <=> context_text;
+                                placeholder-text: "Exemplo: Você é um especialista em...";
+                            }
+                        }
+
+                        // Main Content Section
+                        VerticalLayout {
+                            spacing: 5px;
+                            Text {
+                                text: "Conteúdo Principal";
+                                font-size: 16px;
+                                font-weight: 600;
+                                color: #2e7d32;
+                            }
+                            Text {
+                                text: "Instruções principais para a IA";
+                                font-size: 14px;
+                                color: #558b2f;
+                            }
+                            TextEdit {
+                                height: 100px;
+                                text <=> main_content_text;
+                                placeholder-text: "Descreva a tarefa principal que a IA deve executar...";
+                            }
+                        }
+
+                        // Auxiliary Content Section
+                        VerticalLayout {
+                            spacing: 5px;
+                            Text {
+                                text: "Conteúdo Auxiliar";
+                                font-size: 16px;
+                                font-weight: 600;
+                                color: #2e7d32;
+                            }
+                            Text {
+                                text: "Informações adicionais e exemplos";
+                                font-size: 14px;
+                                color: #558b2f;
+                            }
+                            TextEdit {
+                                height: 60px;
+                                text <=> auxiliary_content_text;
+                                placeholder-text: "Informações de suporte, referências, etc.";
+                            }
+                        }
+
+                        // Limitations Section
+                        VerticalLayout {
+                            spacing: 5px;
+                            Text {
+                                text: "Limitações";
+                                font-size: 16px;
+                                font-weight: 600;
+                                color: #2e7d32;
+                            }
+                            Text {
+                                text: "Restrições e limitações a serem observadas";
+                                font-size: 14px;
+                                color: #558b2f;
+                            }
+                            TextEdit {
+                                height: 60px;
+                                text <=> limitations_text;
+                                placeholder-text: "Não faça X, evite Y, limite Z...";
+                            }
+                        }
+
+                        // Optional Sections
+                        HorizontalLayout {
+                            spacing: 15px;
+                            padding-right: 10px;
+                            
+                            VerticalLayout {
+                                width: 48%;
+                                spacing: 5px;
+                                Text {
+                                    text: "Refatoração (Código)";
+                                    font-size: 14px;
+                                    font-weight: 600;
+                                    color: #1976d2;
+                                }
+                                TextEdit {
+                                    height: 50px;
+                                    text <=> refactoring_text;
+                                    placeholder-text: "Instruções de refatoração...";
+                                }
+                            }
+
+                            VerticalLayout {
+                                width: 48%;
+                                spacing: 5px;
+                                Text {
+                                    text: "Orientações";
+                                    font-size: 14px;
+                                    font-weight: 600;
+                                    color: #1976d2;
+                                }
+                                TextEdit {
+                                    height: 50px;
+                                    text <=> guidance_text;
+                                    placeholder-text: "Tom, estilo, público-alvo...";
+                                }
+                            }
+                        }
+
+                        HorizontalLayout {
+                            spacing: 15px;
+                            padding-right: 10px;
+                            
+                            VerticalLayout {
+                                width: 48%;
+                                spacing: 5px;
+                                Text {
+                                    text: "Testes";
+                                    font-size: 14px;
+                                    font-weight: 600;
+                                    color: #1976d2;
+                                }
+                                TextEdit {
+                                    height: 50px;
+                                    text <=> tests_text;
+                                    placeholder-text: "Requisitos de teste...";
+                                }
+                            }
+
+                            VerticalLayout {
+                                width: 48%;
+                                spacing: 5px;
+                                Text {
+                                    text: "Formato de Saída";
+                                    font-size: 14px;
+                                    font-weight: 600;
+                                    color: #1976d2;
+                                }
+                                TextEdit {
+                                    height: 50px;
+                                    text <=> output_format_text;
+                                    placeholder-text: "Markdown, JSON, texto...";
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Right Panel - Preview
+            Rectangle {
+                background: #c5e8c5;
+                border-radius: 12px;
+                border-width: 2px;
+                border-color: #a3d7a5;
+                drop-shadow-blur: 6px;
+                drop-shadow-color: #00000015;
+                width: 39%;
+                
+                VerticalLayout {
+                    spacing: 10px;
+                    padding-left: 10px;
+                    padding-right: 10px;
+                    padding-top: 20px;
+                    padding-bottom: 20px;
+
+                    Text {
+                        text: "📄 Preview do Prompt";
+                        font-size: 20px;
+                        font-weight: 700;
+                        color: #1b5e20;
+                        horizontal-alignment: center;
+                    }
+
+                    ScrollView {
+                        Rectangle {
+                            background: white;
+                            border-radius: 8px;
+                            border-width: 1px;
+                            border-color: #e0e0e0;
+                            padding: 15px;
+                            
+                            TextEdit {
+                                text: preview_text;
+                                font-size: 14px;
+                                wrap: word-wrap;
+                                read-only: true;
+                                width: 100%;
+                                height: 100%;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // Bottom Action Bar
+        Rectangle {
+            background: #d5e7f8;
+            border-radius: 8px;
+            border-width: 1px;
+            border-color: #e0e0e0;
+            drop-shadow-blur: 4px;
+            drop-shadow-color: #00000010;
+            height: 70px;
+            
+            HorizontalLayout {
+                spacing: 15px;
+                padding-left: 15px;
+                padding-right: 20px;
+                padding-top: 15px;
+                padding-bottom: 15px;
+                alignment: center;
+                
+                Button {
+                    text: "� Gerar Prompt";
+                    clicked => { generate_prompt(); }
+                    preferred-width: 150px;
+                    height: 40px;
+                }
+                
+                Button {
+                    text: "� Abrir";
+                    clicked => { open_prompt(); }
+                    preferred-width: 120px;
+                    height: 40px;
+                }
+                
+                Button {
+                    text: "�💾 Salvar";
+                    clicked => { save_prompt(); }
+                    preferred-width: 120px;
+                    height: 40px;
+                }
+                
+                Button {
+                    text: "📋 Copiar";
+                    clicked => { copy_to_clipboard(); }
+                    preferred-width: 120px;
+                    height: 40px;
+                }
+                
+                Button {
+                    text: "🗑️ Limpar Tudo";
+                    clicked => { clear_all(); }
+                    preferred-width: 140px;
+                    height: 40px;
+                }
+            }
+        }
+    }
+} 

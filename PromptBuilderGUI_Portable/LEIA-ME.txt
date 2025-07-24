@@ -1,0 +1,13 @@
+# 🚀 Prompt Builder GUI - Instalador Portátil 
+ 
+Este pacote contém tudo que você precisa para instalar o Prompt Builder GUI! 
+ 
+## Como Instalar: 
+1. Duplo clique em "INSTALAR.bat" 
+2. Aguarde a instalação 
+3. Use o ícone na área de trabalho! 
+ 
+## Tamanho do Programa: ~10MB 
+## Compatibilidade: Windows 10/11 
+ 
+Divirta-se criando prompts incríveis! 🎉 
