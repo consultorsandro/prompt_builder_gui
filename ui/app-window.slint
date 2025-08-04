@@ -2,10 +2,9 @@ import { Button, VerticalBox, LineEdit, TextEdit, ScrollView, CheckBox } from "s
 
 export component AppWindow inherits Window {
     title: "Prompt Builder GUI";
-    min-width: 800px;
-    min-height: 600px;
-    preferred-width: 1200px;
-    preferred-height: 800px;
+    width: 1200px;
+    height: 800px;
+    // Removed min-width, min-height, preferred-width, and preferred-height to avoid layoutinfo-h binding loop
     background: #e3f2fd;
 
     // Properties for data binding - make them public
@@ -165,84 +164,87 @@ export component AppWindow inherits Window {
                             }
                         }
 
-                        // Optional Sections (responsive layout)
-                        HorizontalLayout {
-                            spacing: 15px;
-                            padding-right: 10px;
-                            
-                            VerticalLayout {
-                                // Responsive width - full width on small screens
-                                width: root.width < 900px ? 100% : 48%;
-                                spacing: 5px;
-                                Text {
-                                    text: "Refatoração (Código)";
-                                    font-size: 14px;
-                                    font-weight: 600;
-                                    color: #1976d2;
-                                }
-                                TextEdit {
-                                    height: root.width < 900px ? 40px : 50px;
-                                    text <=> refactoring_text;
-                                    placeholder-text: "Instruções de refatoração...";
-                                }
+                        // Refactoring Section
+                        VerticalLayout {
+                            spacing: 5px;
+                            Text {
+                                text: "Refatoração (Código)";
+                                font-size: 16px;
+                                font-weight: 600;
+                                color: #2e7d32;
                             }
-
-                            VerticalLayout {
-                                // Hide second column on very small screens
-                                width: root.width < 900px ? 100% : 48%;
-                                visible: root.width >= 600px;
-                                spacing: 5px;
-                                Text {
-                                    text: "Orientações";
-                                    font-size: 14px;
-                                    font-weight: 600;
-                                    color: #1976d2;
-                                }
-                                TextEdit {
-                                    height: root.width < 900px ? 40px : 50px;
-                                    text <=> guidance_text;
-                                    placeholder-text: "Tom, estilo, público-alvo...";
-                                }
+                            Text {
+                                text: "Instruções específicas para refatoração de código";
+                                font-size: 14px;
+                                color: #558b2f;
+                            }
+                            TextEdit {
+                                height: 60px;
+                                text <=> refactoring_text;
+                                placeholder-text: "Instruções de refatoração...";
                             }
                         }
 
-                        HorizontalLayout {
-                            spacing: 15px;
-                            padding-right: 10px;
-                            
-                            VerticalLayout {
-                                // Responsive width
-                                width: root.width < 900px ? 100% : 48%;
-                                spacing: 5px;
-                                Text {
-                                    text: "Testes";
-                                    font-size: 14px;
-                                    font-weight: 600;
-                                    color: #1976d2;
-                                }
-                                TextEdit {
-                                    height: root.width < 900px ? 40px : 50px;
-                                    text <=> tests_text;
-                                    placeholder-text: "Requisitos de teste...";
-                                }
+                        // Guidance Section
+                        VerticalLayout {
+                            spacing: 5px;
+                            Text {
+                                text: "Orientações";
+                                font-size: 16px;
+                                font-weight: 600;
+                                color: #2e7d32;
                             }
+                            Text {
+                                text: "Tom, estilo, público-alvo e diretrizes gerais";
+                                font-size: 14px;
+                                color: #558b2f;
+                            }
+                            TextEdit {
+                                height: 60px;
+                                text <=> guidance_text;
+                                placeholder-text: "Tom, estilo, público-alvo...";
+                            }
+                        }
 
-                            VerticalLayout {
-                                // Responsive width and visibility
-                                width: root.width < 900px ? 100% : 48%;
-                                visible: root.width >= 600px;
-                                spacing: 5px;
-                                Text {
-                                    text: "Formato de Saída";
-                                    font-size: 14px;
-                                    font-weight: 600;
-                                    color: #1976d2;
-                                }
-                                TextEdit {
-                                    height: root.width < 900px ? 40px : 50px;
-                                    text <=> output_format_text;
-                                    placeholder-text: "Markdown, JSON, texto...";
-                                }
+                        // Tests Section
+                        VerticalLayout {
+                            spacing: 5px;
+                            Text {
+                                text: "Testes";
+                                font-size: 16px;
+                                font-weight: 600;
+                                color: #2e7d32;
+                            }
+                            Text {
+                                text: "Requisitos e critérios de teste";
+                                font-size: 14px;
+                                color: #558b2f;
+                            }
+                            TextEdit {
+                                height: 60px;
+                                text <=> tests_text;
+                                placeholder-text: "Requisitos de teste...";
+                            }
+                        }
+
+                        // Output Format Section
+                        VerticalLayout {
+                            spacing: 5px;
+                            Text {
+                                text: "Formato de Saída";
+                                font-size: 16px;
+                                font-weight: 600;
+                                color: #2e7d32;
+                            }
+                            Text {
+                                text: "Especificação do formato desejado para a resposta";
+                                font-size: 14px;
+                                color: #558b2f;
+                            }
+                            TextEdit {
+                                height: 60px;
+                                text <=> output_format_text;
+                                placeholder-text: "Markdown, JSON, texto...";
                             }
                         }
                     }
